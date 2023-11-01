@@ -10,11 +10,11 @@ class Network:
         self.alpha = alpha
         self.reg_lambda = reg_lambda
 
-    def forward_propagation(self, input):
-        self.layers[1].thetas
-        z =theta*inputs
-        activation = self.sigmoid(z)
-        return 0
+    def forward_propagation(self, activation):
+        for layer in self.layers:
+            z = layer.thetas * np.transpose(np.append(1, activation))  # add bias term to input
+            activation = self.sigmoid(z)
+            layer.set_activations(activation)
 
     def backward_propagation(self):
         return 0
