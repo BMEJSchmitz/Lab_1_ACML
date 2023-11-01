@@ -6,7 +6,10 @@ import numpy as np
 alpha = 0.5
 reg_lambda = 0.5
 n = 10000
+epochs = 50
+
 network = Network([8, 3, 8], alpha, reg_lambda)
+random.seed(3)
 
 inputs = np.identity(8)
 train_data = np.array(n)
@@ -15,4 +18,4 @@ for i in range(0, n):
     new_sample = inputs[rand_val]
     train_data[i] = new_sample
 
-network.train(train_data)
+network.train(train_data, epochs)

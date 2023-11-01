@@ -22,7 +22,10 @@ class Network:
     def sigmoid(self, z):
         return 1 / (1 + np.exp(-z))
 
-    def train(self, inputs):
+    def train(self, inputs, epochs):
+        for epoch in range (0, epochs):
+            self.forward_propagation(inputs)
+            self.backward_propagation()
 
         return 0
 
