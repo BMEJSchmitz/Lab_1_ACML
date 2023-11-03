@@ -3,10 +3,10 @@ import random
 from network import Network
 import numpy as np
 
-alpha = 0.4
-reg_lambda = 0.2
-n = 100
-epochs = 1000
+alpha = 0.2
+reg_lambda = 0.05
+n = 1000
+epochs = 50
 
 network = Network([8, 3, 8], alpha, reg_lambda)
 random.seed(3)

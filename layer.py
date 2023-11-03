@@ -5,14 +5,17 @@ import random
 class Layer:
 
     def __init__(self, neurons, next_neurons, flag):
+        small_constant = 0.000001
         random.seed(3)
         self.flag = flag
-        self.neurons = neurons + 1  # int
+        self.neurons = neurons  # int
         if flag is not 'input':
             self.activations = np.zeros(neurons)  # (1d vector)
         if flag is not 'output':
-            self.thetas = (np.random.rand(neurons + 1, next_neurons) / 2)+0.000001  # weights (2d vector)/matrix
-            self.errors = np.zeros((neurons + 1, next_neurons))
+            self.thetas = (np.random.rand(neurons, next_neurons) / 2)+ small_constant # weights (2d vector)/matrix
+            self.errors = np.zeros((neurons, next_neurons))
+            self.bias = (np.random.rand(1, next_neurons) / 2)+ small_constant
+            self.bias_error = np.zeros((1, next_neurons))
 
     def get_thetas(self):
         return self.thetas
@@ -23,6 +26,12 @@ class Layer:
     def get_errors(self):
         return self.errors
 
+    def get_bias(self):
+        return self.bias
+
+    def get_bias_error(self):
+        return self.bias_error
+
     def set_thetas(self, new_thetas):
         self.thetas = new_thetas
 
@@ -31,3 +40,9 @@ class Layer:
 
     def set_errors(self, new_errors):
         self.errors = new_errors
+
+    def set_bias(self, new_bias):
+        self.bias = new_bias
+
+    def set_bias_error(self, new_bias_error):
+        self.bias_error = new_bias_error
