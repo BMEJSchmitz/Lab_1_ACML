@@ -12,10 +12,10 @@ class Layer:
         if flag is not 'input':
             self.activations = np.zeros(neurons)  # (1d vector)
         if flag is not 'output':
-            self.thetas = (np.random.rand(neurons, next_neurons) / 2)+ small_constant # weights (2d vector)/matrix
-            self.errors = np.zeros((neurons, next_neurons))
-            self.bias = (np.random.rand(1, next_neurons) / 2)+ small_constant
-            self.bias_error = np.zeros((1, next_neurons))
+            self.thetas = (np.random.rand(next_neurons, neurons) / 2)+ small_constant # weights (2d vector)/matrix
+            self.errors = np.zeros((next_neurons, neurons))
+            self.bias = (np.random.rand(next_neurons, 1) / 2)+ small_constant
+            self.bias_error = np.zeros((next_neurons, 1))
 
     def get_thetas(self):
         return self.thetas
@@ -46,3 +46,9 @@ class Layer:
 
     def set_bias_error(self, new_bias_error):
         self.bias_error = new_bias_error
+
+    def add_bias_error(self, error):
+        self.bias_error += error
+
+    def add_error(self, error):
+        self.errors += error
