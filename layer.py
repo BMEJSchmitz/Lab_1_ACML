@@ -3,18 +3,31 @@ import random
 
 
 class Layer:
+    """
+        Implements the layer in an NN.
+        Store attributes thetas, activations, error, bias, bias_error.
+
+        Parameters
+        ----------
+        neurons: int
+            number of neurons
+        next_neurons: int
+            number of neurons in the next layer
+        flag: str
+            The kind of layer: input, hidden or output
+    """
 
     def __init__(self, neurons, next_neurons, flag):
         small_constant = 0.000001
         random.seed(3)
         self.flag = flag
         self.neurons = neurons  # int
-        if flag is not 'input':
+        if flag != 'input':
             self.activations = np.zeros(neurons)  # (1d vector)
-        if flag is not 'output':
-            self.thetas = (np.random.rand(next_neurons, neurons) / 2)+ small_constant # weights (2d vector)/matrix
+        if flag != 'output':
+            self.thetas = (np.random.rand(next_neurons, neurons) / 2)+small_constant  # weights (2d vector)/matrix
             self.errors = np.zeros((next_neurons, neurons))
-            self.bias = (np.random.rand(next_neurons, 1) / 2)+ small_constant
+            self.bias = (np.random.rand(next_neurons, 1) / 2)+small_constant
             self.bias_error = np.zeros((next_neurons, 1))
 
     def get_thetas(self):
