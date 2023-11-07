@@ -1,6 +1,6 @@
 import numpy as np
 from layer import Layer
-
+from sklearn.metrics import mean_squared_error
 
 class Network:
     """
@@ -102,6 +102,7 @@ class Network:
         self.layers[0].add_error(big_delta_1)
         self.layers[0].add_bias_error(small_delta_2)
 
+    # correct
     @staticmethod
     def sigmoid(z):
         """
@@ -117,6 +118,7 @@ class Network:
         """
         return 1 / (1 + np.exp(-z))
 
+    #correct
     @staticmethod
     def sigmoid_derivative(z):
         """
@@ -146,17 +148,26 @@ class Network:
             epochs: int
                 number of epochs to train the NN for
         """
+        learning_curve = []
         for epoch in range(0, epochs):
             self.layers[0].get_errors().fill(0)
             self.layers[1].get_errors().fill(0)
             self.layers[0].get_bias_error().fill(0)
             self.layers[1].get_bias_error().fill(0)
 
+            mse = 0
             for sample in inputs:
                 self.forward_pass(sample)
                 self.backward_pass(sample)
+                mse += mean_squared_error(sample.reshape(-1,1), self.layers[2].get_activations())
 
             self.update_weights(len(inputs))
+
+            if epoch % 10 == 0:
+                error = mse/len(inputs)
+                learning_curve.append(error)
+
+        return learning_curve
 
     def test(self, nn_input):
         """
@@ -179,3 +190,18 @@ class Network:
             activation = self.sigmoid(z)
 
         return activation
+
+    def evaluate(self, samples):
+        error = 0
+
+        for sample in samples:
+            activation = sample
+            for i in range(0, len(self.layers) - 1):
+                weights = self.layers[i].thetas
+                z = np.matmul(weights, activation)
+                activation = self.sigmoid(z)
+
+            error += mean_squared_error(sample, activation)
+
+        return error / len(samples)
+

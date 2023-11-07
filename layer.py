@@ -19,7 +19,6 @@ class Layer:
 
     def __init__(self, neurons, next_neurons, flag):
         small_constant = 0.000001
-        random.seed(3)
         self.flag = flag
         self.neurons = neurons  # int
         if flag != 'input':

@@ -1,28 +1,35 @@
 import random
 from network import Network
 import numpy as np
-
+import matplotlib.pyplot as plt
 # init
-alpha = 0.01
-reg_lambda = 0.001
-n = 10000
-epochs = 300
-network = Network([8, 3, 8], alpha, reg_lambda)
+alphas = [0.1, 0.25, 0.5, 0.75, 0.8, 0.85, 0.90, 0.95, 1]
+lambdas = [0, 0.1, 0.25, 0.5, 0.75, 1]
+epochs = 1000
 random.seed(3)
 
-# create training data
 inputs = np.identity(8)
-train_data = []
-for i in range(0, n):
-    rand_val = random.randint(0, 7)
-    new_sample = inputs[rand_val]
-    train_data.append(new_sample)
 
-# fit the NN
-network.fit(train_data, epochs)
+# fit and test the NN with different parameter setups
+for alpha in alphas:
+    for reg_lambda in lambdas:
+        print(f"Training network with alpha = {alpha} and lambda = {reg_lambda}:")
+        network = Network([8, 3, 8], alpha, reg_lambda)
+        history = network.fit(inputs, epochs)
+        # plot training
+        epoch_nums = range(0, epochs, 10)
+        plt.plot(epoch_nums, history)
+        plt.title(f"Training curve for alpha = {alpha} and lambda = {reg_lambda}:")
+        plt.xlabel('epoch')
+        plt.ylabel('MSE')
+        plt.show()
+        plt.savefig(f'plots/curve_{alpha}_{reg_lambda}.png')
 
-# test the NN
-for i in range(0, 8):
-    print(f"Input: {inputs[i, :]}")
-    result = network.test(inputs[i, :])
-    print(f"Output: {result}")
+        print(f"Testing network with alpha = {alpha} and lambda = {reg_lambda}:")
+        for sample in inputs:
+            print(f"Input: {sample}")
+            result = network.test(sample)
+            print(f"Output: {result}")
+
+        evaluation = network.evaluate(inputs)
+        print(f"MSE = {evaluation}")
