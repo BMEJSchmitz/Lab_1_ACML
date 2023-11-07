@@ -83,24 +83,24 @@ class Network:
             sample : np.array
                 a single input to the first layer of the NN
         """
-        activations = self.layers[2].get_activations()
-        z = self.sigmoid_derivative(activations)
-        small_delta = np.multiply(activations - sample.reshape(-1, 1), z)
+        activations_3 = self.layers[2].get_activations()
+        z_3 = self.sigmoid_derivative(activations_3)
+        small_delta_3 = np.multiply(activations_3 - sample.reshape(-1, 1), z_3)
 
         # hidden layer
-        activations = self.layers[1].get_activations()
-        big_delta = np.matmul(small_delta, activations.transpose())
-        self.layers[1].add_error(big_delta)
+        activations_2 = self.layers[1].get_activations()
+        big_delta_2 = np.matmul(small_delta_3, activations_2.transpose())
+        self.layers[1].add_error(big_delta_2)
         new_delta = self.layers[1].get_errors()
-        self.layers[1].add_bias_error(small_delta)
-        z = self.sigmoid_derivative(activations)
-        small_delta = np.multiply(np.matmul(self.layers[1].get_thetas().transpose(), small_delta), z)
+        self.layers[1].add_bias_error(small_delta_3)
+        z_2 = self.sigmoid_derivative(activations_2)
+        small_delta_2 = np.multiply(np.matmul(self.layers[1].get_thetas().transpose(), small_delta_3), z_2)
 
         # input layer
-        activations = sample.reshape(-1, 1)
-        big_delta = np.matmul(small_delta, activations.transpose())
-        self.layers[0].add_error(big_delta)
-        self.layers[0].add_bias_error(small_delta)
+        activations_1 = sample.reshape(-1, 1)
+        big_delta_1 = np.matmul(small_delta_2, activations_1.transpose())
+        self.layers[0].add_error(big_delta_1)
+        self.layers[0].add_bias_error(small_delta_2)
 
     @staticmethod
     def sigmoid(z):
