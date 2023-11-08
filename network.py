@@ -55,23 +55,29 @@ class Network:
                 number of inputs used per epoch
         """
 
-        theta_update = (1 / m) * self.layers[1].get_errors()
-        reg = self.reg_lambda * self.layers[1].get_thetas()
-        new_theta = self.layers[1].get_thetas() - (self.alpha * (theta_update + reg))
-        self.layers[1].set_thetas(new_theta)
+        current_theta_2 = self.layers[1].get_thetas()
+        theta_update_2 = (1 / m) * self.layers[1].get_errors()
+        reg_2 = self.reg_lambda * current_theta_2
+        theta_update_2 += reg_2
+        new_theta_2 = current_theta_2 - (self.alpha * theta_update_2)
+        self.layers[1].set_thetas(new_theta_2)
 
-        bias_update = (1 / m) * self.layers[1].get_bias_error()
-        new_bias = self.layers[1].get_bias() - (self.alpha * bias_update)
-        self.layers[1].set_bias(new_bias)
+        current_bias_2 = self.layers[1].get_bias()
+        bias_update_2 = (1 / m) * self.layers[1].get_bias_error()
+        new_bias_2 = current_bias_2 - (self.alpha * bias_update_2)
+        self.layers[1].set_bias(new_bias_2)
 
-        theta_update = (1 / m) * self.layers[0].get_errors()
-        reg = self.reg_lambda * self.layers[0].get_thetas()
-        new_theta = self.layers[0].get_thetas() - (self.alpha * (theta_update + reg))
+        current_theta_1 = self.layers[0].get_thetas()
+        theta_update_1 = (1 / m) * self.layers[0].get_errors()
+        reg = self.reg_lambda * current_theta_1
+        theta_update_1 += reg
+        new_theta = self.layers[0].get_thetas() - (self.alpha * theta_update_1)
         self.layers[0].set_thetas(new_theta)
 
-        bias_update = (1 / m) * self.layers[0].get_bias_error()
-        new_bias = self.layers[0].get_bias() - (self.alpha * bias_update)
-        self.layers[0].set_bias(new_bias)
+        current_bias_1 = self.layers[0].get_bias()
+        bias_update_1 = (1 / m) * self.layers[0].get_bias_error()
+        new_bias_1 = current_bias_1 - (self.alpha * bias_update_1)
+        self.layers[0].set_bias(new_bias_1)
 
     def backward_pass(self, sample):
         """
@@ -85,7 +91,8 @@ class Network:
         """
         activations_3 = self.layers[2].get_activations()
         z_3 = self.sigmoid_derivative(activations_3)
-        small_delta_3 = np.multiply(activations_3 - sample.reshape(-1, 1), z_3)
+        subtraction = activations_3 - sample.reshape(-1, 1)
+        small_delta_3 = np.multiply(subtraction, z_3)
 
         # hidden layer
         activations_2 = self.layers[1].get_activations()
@@ -100,6 +107,7 @@ class Network:
         activations_1 = sample.reshape(-1, 1)
         big_delta_1 = np.matmul(small_delta_2, activations_1.transpose())
         self.layers[0].add_error(big_delta_1)
+        new_error = self.layers[0].get_errors()
         self.layers[0].add_bias_error(small_delta_2)
 
     # correct
@@ -183,10 +191,12 @@ class Network:
             np.array
                 activations of the final layer
         """
-        activation = nn_input
+        activation = nn_input.reshape(-1, 1)
         for i in range(0, len(self.layers) - 1):
             weights = self.layers[i].thetas
-            z = np.matmul(weights, activation)
+            mul = np.matmul(weights, activation)
+            bias = self.layers[i].get_bias()
+            z = mul + bias
             activation = self.sigmoid(z)
 
         return activation
@@ -195,13 +205,15 @@ class Network:
         error = 0
 
         for sample in samples:
-            activation = sample
+            activation = sample.reshape(-1, 1)
             for i in range(0, len(self.layers) - 1):
                 weights = self.layers[i].thetas
-                z = np.matmul(weights, activation)
+                mul = np.matmul(weights, activation)
+                bias = self.layers[i].get_bias()
+                z = mul + bias
                 activation = self.sigmoid(z)
 
-            error += mean_squared_error(sample, activation)
+            error += mean_squared_error(sample.reshape(-1, 1), activation)
 
         return error / len(samples)
 

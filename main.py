@@ -2,15 +2,18 @@ import random
 from network import Network
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+
 # init
 alphas = [0.1, 0.25, 0.5, 0.75, 0.8, 0.85, 0.90, 0.95, 1]
-lambdas = [0, 0.1, 0.25, 0.5, 0.75, 1]
-epochs = 1000
+lambdas = [0, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0.5, 0.75]
+epochs = 50000
 random.seed(3)
 
 inputs = np.identity(8)
 
 # fit and test the NN with different parameter setups
+errors = []
 for alpha in alphas:
     for reg_lambda in lambdas:
         print(f"Training network with alpha = {alpha} and lambda = {reg_lambda}:")
@@ -22,14 +25,20 @@ for alpha in alphas:
         plt.title(f"Training curve for alpha = {alpha} and lambda = {reg_lambda}:")
         plt.xlabel('epoch')
         plt.ylabel('MSE')
-        plt.show()
         plt.savefig(f'plots/curve_{alpha}_{reg_lambda}.png')
+        plt.show(block=False)
+        plt.clf()
 
         print(f"Testing network with alpha = {alpha} and lambda = {reg_lambda}:")
         for sample in inputs:
             print(f"Input: {sample}")
             result = network.test(sample)
-            print(f"Output: {result}")
+            print(f"Output: {result.transpose()}")
 
         evaluation = network.evaluate(inputs)
-        print(f"MSE = {evaluation}")
+        errors.append({"Name" : f"{alpha}_{reg_lambda}", "MSE" : evaluation})
+
+results = pd.DataFrame(errors)
+results.set_index('Name', inplace=True)
+print(results)
+results.to_csv("plots/results.csv")
